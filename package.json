@@ -1,0 +1,12 @@
+{
+  "name": "ecomine",
+  "version": "1.0.0",
+  "description": "EcoMine is a web platform designed to help the Indian coal sector achieve carbon neutrality by quantifying emissions, offering actionable insights, and predicting climate impacts. It incorporates advanced AI tools and real-time data tracking to enable better decision-making and emission reduction.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
