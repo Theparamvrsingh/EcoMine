@@ -47,7 +47,7 @@ We welcome contributions! Feel free to submit issues or pull requests.
 This project is licensed under the MIT License.
 
 ## **Contact**  
-For any inquiries, reach out at [your-email@example.com](mailto:paramveercse@gmail.com).
+For any inquiries, reach out at paramveercse@gmail.com.
 
 ---
 
