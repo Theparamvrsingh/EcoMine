@@ -1,0 +1,611 @@
+<% layout("../layouts/boilerplate") %>
+
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-image: url(https://wallpapercave.com/wp/wp7501872.jpg);
+    color: #142114;
+    margin: 0;
+    padding: 0;
+  }
+
+  .buton{
+   width: 100%;
+   height: 80%;
+   background-color: #142114;
+   color: white;
+   transition: 0.2s;
+   font-weight: bold;
+  }
+
+  .buton:hover{
+   color: #f39c12;
+   background-color: #142114;
+   box-shadow: 0px 2px 4px 0px #f39c12;
+   text-shadow: rgb(131, 131, 131) 1px 0 10px;
+  }
+
+  .next:hover::after{
+    content: " >";
+  }
+
+  .prev:hover::before{
+    content: "< ";
+  }
+
+  .container {
+    padding: 40px;
+
+  }
+
+  #calcBox {
+    background: #eeeeee;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin-top: 20px;
+  }
+
+  .header-title {
+    font-size: 3rem;
+    color: #142114;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .form {
+    margin: 0 auto;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .addmine .form-label {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .addmine .form-control, .addmine .form-select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+
+  .progressBar{
+    position: relative;
+    margin-bottom: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+  }
+
+  .progressBar::before, .pr{
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 8px;
+    width: 100%;
+    background-color: #ddd;
+    
+  }
+
+  .pr{
+    background-color: rgb(0, 0, 0);
+    width: 0%;
+    transition: 0.7s;
+  }
+
+  .progress-step{
+    width: 60px;
+    height: 60px;
+    background-color: #ddd;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    
+  }
+
+  .progress-step::after{
+    content: attr(data-title);
+    color: #000000;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    font-size: 15px;
+    font-weight: bold;
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+  }
+
+  .progress-step-active{
+    background-color: rgb(0, 0, 0);
+    color: orange;
+  }
+
+.form {
+  margin: 0 auto;
+}
+
+.form-step {
+  display: none;
+}
+
+.form-step-active {
+  margin-top: 90px;
+  display: block;
+  font-weight: bold;
+}
+
+@keyframes animate {
+  from {
+      transform: translateX(-5%);
+      opacity: 0;
+  }
+  to {
+      transform: translateX(0);
+      opacity: 1;
+  }
+}
+
+#resultsTab h3 {
+  margin-top: -30px;
+}
+
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-8 offset-2">
+        <div id="calcBox">
+          <div class="mt-4">
+            <h1 class="text-center mb-5 header-title ">Know Your Footprint</h1>
+            <form action="/index" class="form" id="myForm" method="post">
+  
+            <!-- Progress Bar -->
+            <div class="progressBar text-center">
+              <div class="pr" id="pr"></div>
+              <div class="progress-step progress-step-active" data-title="Mine Data"><svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-clipboard2-data" viewBox="0 0 16 16">
+                <path d="M9.5 0a.5.5 0 0 1 .5.5.5.5 0 0 0 .5.5.5.5 0 0 1 .5.5V2a.5.5 0 0 1-.5.5h-5A.5.5 0 0 1 5 2v-.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5.5.5 0 0 1 .5-.5z"/>
+                <path d="M3 2.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 0 0-1h-.5A1.5 1.5 0 0 0 2 2.5v12A1.5 1.5 0 0 0 3.5 16h9a1.5 1.5 0 0 0 1.5-1.5v-12A1.5 1.5 0 0 0 12.5 1H12a.5.5 0 0 0 0 1h.5a.5.5 0 0 1 .5.5v12a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5z"/>
+                <path d="M10 7a1 1 0 1 1 2 0v5a1 1 0 1 1-2 0zm-6 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm4-3a1 1 0 0 0-1 1v3a1 1 0 1 0 2 0V9a1 1 0 0 0-1-1"/>
+              </svg></div>
+              <div class="progress-step" data-title="Combustion"><svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-minecart-loaded" viewBox="0 0 16 16">
+                <path d="M4 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2m0 1a2 2 0 1 0 0-4 2 2 0 0 0 0 4m8-1a1 1 0 1 1 0-2 1 1 0 0 1 0 2m0 1a2 2 0 1 0 0-4 2 2 0 0 0 0 4M.115 3.18A.5.5 0 0 1 .5 3h15a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 14 12H2a.5.5 0 0 1-.491-.408l-1.5-8a.5.5 0 0 1 .106-.411zm.987.82 1.313 7h11.17l1.313-7z"/>
+                <path fill-rule="evenodd" d="M6 1a2.498 2.498 0 0 1 4 0c.818 0 1.545.394 2 1 .67 0 1.552.57 2 1h-2c-.314 0-.611-.15-.8-.4-.274-.365-.71-.6-1.2-.6-.314 0-.611-.15-.8-.4a1.497 1.497 0 0 0-2.4 0c-.189.25-.486.4-.8.4-.507 0-.955.251-1.228.638q-.136.194-.308.362H3c.13-.147.401-.432.562-.545a1.6 1.6 0 0 0 .393-.393A2.5 2.5 0 0 1 6 1"/>
+              </svg></div>
+              <div class="progress-step" data-title="Electricity Use"><svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-lightning" viewBox="0 0 16 16">
+                <path d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641zM6.374 1 4.168 8.5H7.5a.5.5 0 0 1 .478.647L6.78 13.04 11.478 7H8a.5.5 0 0 1-.474-.658L9.306 1z"/>
+              </svg></div>
+              <div class="progress-step" data-title="Transportation"><svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-truck" viewBox="0 0 16 16">
+                <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2"/>
+              </svg></div>
+              <div class="progress-step" data-title="Deforestation"><svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-tree" viewBox="0 0 16 16">
+                <path d="M8.416.223a.5.5 0 0 0-.832 0l-3 4.5A.5.5 0 0 0 5 5.5h.098L3.076 8.735A.5.5 0 0 0 3.5 9.5h.191l-1.638 3.276a.5.5 0 0 0 .447.724H7V16h2v-2.5h4.5a.5.5 0 0 0 .447-.724L12.31 9.5h.191a.5.5 0 0 0 .424-.765L10.902 5.5H11a.5.5 0 0 0 .416-.777zM6.437 4.758A.5.5 0 0 0 6 4.5h-.066L8 1.401 10.066 4.5H10a.5.5 0 0 0-.424.765L11.598 8.5H11.5a.5.5 0 0 0-.447.724L12.69 12.5H3.309l1.638-3.276A.5.5 0 0 0 4.5 8.5h-.098l2.022-3.235a.5.5 0 0 0 .013-.507"/>
+              </svg></div>
+              <div class="progress-step" data-title="Results"><svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+                <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+              </svg></div>
+            </div>
+            
+            <div class=" form-step form-step-active">
+              <div class="mt-4">
+                      <div class="mb-4">
+                          <label for="name" class="form-label">Name of the Coal Mine:</label>
+                          <input type="text" class="form-control" id="name" name="Mine[name]">
+                      </div>
+                      <p class="mb-2 text-center border-bottom">Location of the Coal Mine</p>
+                      <div class="mb-4 row gx-4">
+                        
+                        <div class="col">
+                          <div class="p-2">
+                            <label for="State" class="form-label">State</label>
+                            <select class="form-select" aria-label="State" name="Mine[state]" id="state">
+                            <option selected id="selectedState">---Select Your State---</option>
+                            <% for(let p of places.states) {%>
+                                <option value="<%= p.name %>"><%= p.name %></option>
+                            <% } %>
+                            </select>
+                          </div>
+                        </div>
+                          
+                        <div class="col">
+                          <div class="p-2">
+                            <label for="district" class="form-label">District</label>
+                          <select class="form-select" aria-label="district" name="Mine[district]" id="city">
+                          <option selected >---Select Your District---</option>
+                          </select>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="mb-2">
+                          <label for="image" class="form-label">Image URL</label>
+                          <input type="text" class="form-control" id="image" name="Mine[image]">
+                      </div>
+
+                      <div class="mb-2">
+                        <label for="desc" class="form-label">Description</label>
+                        <textarea class="form-control" name="Mine[description]" id="desc"></textarea>
+                      </div>
+                      <button type="button" class="btn mt-4 next buton"><span>Next</span></button>
+              </div>
+          </div>
+  
+            <!-- Direct Emission Content -->
+            <div id="directEmissionTab" class="form-step">
+                <p class="text-start fs-4">Enter Coal Quantities (in kg)</p>
+  
+                <div class="row mb-2 align-items-center">
+                  <label for="lignite" class="col-2 text-end">Lignite:</label>
+                  <div class="col-6">
+                    <input type="number" class="form-control shadow-sm" id="lignite" name="Mine[factors.coalType.lignite]">
+                  </div>
+                  <div class="col-1 p-0">kg.</div>
+                </div>
+                <div class="row mb-2 align-items-center">
+                  <label for="subbitu" class="col-2 text-end">Sub-bituminous:</label>
+                  <div class="col-6">
+                    <input type="number" class="form-control shadow-sm" id="subbitu" name="Mine[factors.coalType.subbitu]">
+                  </div>
+                  <div class="col-1 p-0">kg.</div>
+                </div>
+                <div class="row mb-2 align-items-center">
+                  <label for="bitu" class="col-2 text-end">Bituminous:</label>
+                  <div class="col-6">
+                    <input type="number" class="form-control shadow-sm" id="bitu" name="Mine[factors.coalType.bitu]">
+                  </div>
+                  <div class="col-1 p-0">kg.</div>
+                </div>
+                <div class="row mb-2 align-items-center">
+                  <label for="anthra" class="col-2 text-end">Anthracite:</label>
+                  <div class="col-6">
+                    <input type="number" class="form-control shadow-sm" id="anthra" name="Mine[factors.coalType.anthra]">
+                  </div>
+                  <div class="col-1 p-0">kg.</div>
+                </div>
+                <div class="row">
+                  <div class="col-4">
+                    <button type="button" class="btn mt-4 prev buton"><span>Previous</span></button>
+                
+                  </div>
+                  <div class="col-4"></div>
+                  <div class="col-4">
+                    <button type="button" class="btn mt-4 next buton"><span>Next</span></button>
+                  </div>
+                </div>
+                 </div>
+  
+            <!-- Electricity Use Content -->
+            <div id="electricityUseTab" class="form-step">
+                <div class="mb-4">
+                  <label for="electricitycon" class="form-label">Electricity Consumed (in kWh):</label>
+                  <input type="number" class="form-control shadow-sm" id="electricitycon" name="Mine[factors.electricityConsume]">
+                </div>
+                <div class="mb-4">
+                  <label for="eFactor" class="form-label">Emission Factor:</label>
+                  <input type="number" class="form-control shadow-sm" id="eFactor" value=0.716 name="Mine[factors.eFactor]">
+                  <div class="form-text">Average emission factor as per 2023 is approx. 0.716</div>
+                </div>
+                <div class="row">
+                  <div class="col-4">
+                    <button type="button" class="btn mt-4 prev buton"><span>Previous</span></button>
+                
+                  </div>
+                  <div class="col-4"></div>
+                  <div class="col-4">
+                    <button type="button" class="btn mt-4 next buton"><span>Next</span></button>
+                  </div>
+                </div>
+              </div>
+  
+            <!-- Transport & Others Content -->
+            <div id="transportTab" class="form-step">
+                <div class="mb-4">
+                  <p class="text-center">Fuel Consumption</p>
+                  <div class="row gx-5">
+                    <div class="col border-end border-dark-subtle">
+                      <div class="p-2">
+                        <div class="text-center border-bottom">Diesel</div>
+                        <label for="ddistance" class="form-label mt-3">Distance Travelled:</label>
+                        <input type="number" class="form-control shadow-sm" id="ddistance" name="Mine[factors.fuelUse.ddistance]">
+                        <label for="deff" class="form-label mt-3">Fuel efficiency of vehicle:</label>
+                        <input type="number" class="form-control shadow-sm" id="deff" name="Mine[factors.fuelUse.dfueleff]">
+                      </div>
+                    </div>
+                    
+                    <div class="col">
+                      <div class="p-2">
+                        <div class="text-center border-bottom">Petrol</div>
+                        <label for="pdistance" class="form-label mt-3">Distance Travelled:</label>
+                        <input type="number" class="form-control shadow-sm" id="pdistance" name="Mine[factors.fuelUse.pdistance]">
+                        <label for="peff" class="form-label mt-3">Fuel efficiency of vehicle:</label>
+                        <input type="number" class="form-control shadow-sm" id="peff" name="Mine[factors.fuelUse.pfueleff]">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-4">
+                    <button type="button" class="btn mt-4 prev buton"><span>Previous</span></button>
+                  </div>
+                  <div class="col-4"></div>
+                  <div class="col-4">
+                    <button type="button" class="btn mt-4 next buton"><span>Next</span></button>
+                  </div>
+                </div>
+              </div>
+  
+            <!-- Deforestation Content -->
+            <div id="deforestationTab" class="form-step">
+                <div class="mb-4">
+                  <label for="deforestedArea" class="form-label">Deforested Area (in hectares):</label>
+                  <input type="number" class="form-control shadow-sm" id="deforestedArea" name="Mine[factors.deforestedArea]">
+                </div>
+                <div class="mb-4">
+                  <label for="cStock" class="form-label"> Carbon Stock per Hectare:</label>
+                  <input type="number" class="form-control shadow-sm" id="cStock" value=150 name="Mine[factors.cStock]">
+                </div>
+                <div class="row">
+                  <div class="col-4">
+                    <button type="button" class="btn mt-4 prev buton" ><span>Previous</span></button>
+                  </div>
+                  <div class="col-4"></div>
+                  <div class="col-4">
+                    <button type="button" class="btn mt-4 next buton rbutton">Show Result</button>
+                  </div>
+                </div>
+                
+                
+            </div>
+  
+            <!-- Results Content -->
+
+            <!-- placeholder for database -->
+             
+                  <!-- Direct Emissions -->          
+                    <input type="hidden" name="Mine[result.coalFootprint]" value="0.00" id="hiddenDirectEmissions">                 
+                  <!-- Electricity Emissions -->                  
+                    <input type="hidden" name="Mine[result.electricityFootprint]" value="0.00" id="hiddenElectricityEmissions">                  
+                  <!-- Transport Emissions -->                  
+                    <input type="hidden" name="Mine[result.transportFootprint]" value="0.00" id="hiddenTransportEmissions">
+                  <!-- Deforestation -->                                     
+                    <input type="hidden" name="Mine[result.deforestationFootprint]" value="0.00" id="hiddenDeforestationEmissions">
+                    <!-- total -->
+                    <input type="hidden" name="Mine[result.totalFootprint]" value="0.00" id="hiddenTotalFootprint">
+                  
+
+
+            <div id="resultsTab" class="form-step">
+              <div class="mb-4">
+
+                <h3 class="text-center text-success mb-4"><b>Carbon Footprint Results</b></h3>
+
+                <p class="text-center" id="directEmissionResult">Direct Emissions: <input class="form-control" type="text" value="0.00" aria-label="Disabled input example" disabled readonly>kg CO<sub>2</sub></p>
+                <p class="text-center" id="electricityResult">Electricity Use: <input class="form-control" type="text" value="0.00" aria-label="Disabled input example" disabled readonly>kg CO<sub>2</sub></p>
+                <p class="text-center" id="transportResult">Transport & Others: <input class="form-control" type="text" value="0.00" aria-label="Disabled input example" disabled readonly>kg CO<sub>2</sub></p>
+                <p class="text-center" id="deforestationResult">Deforestation: <input class="form-control" type="text" value="0.00" aria-label="Disabled input example" disabled readonly>kg CO<sub>2</sub></p>
+                <hr>
+                <h4 class="text-center bold" id="totalResult">Total: <input class="form-control" type="text" value="0.00" aria-label="Disabled input example" disabled readonly> kg CO<sub>2</sub></h4>
+                
+                
+                <div class="row">
+                  <div class="col-4">
+                    <button type="button" class="btn mt-4 prev buton"><span>Previous</span></button>
+                  </div>
+                  <div class="col-4"></div>
+                  <div class="col-4">
+                    <button class="btn btn-success mt-4 save buton">Save</button>
+                  </div>
+                  <div class="col-4"></div>
+                  <div class="col-4">
+                    <button class="btn mt-4 buton suggestion"><span>Offset Now</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+  const formSteps = document.querySelectorAll(".form-step");
+  const prev = document.querySelectorAll(".prev");
+  const next = document.querySelectorAll('.next');
+  const progress = document.querySelector('#pr');
+  const progressSteps = document.querySelectorAll(".progress-step");
+  const resultbtn = document.querySelector(".rbutton");
+
+  
+
+
+  let fstep = 0;
+
+  next.forEach((btn)=>{
+    btn.addEventListener("click", () =>{
+      fstep++;
+      updateFormSteps();
+      updateProgressbar();
+    })
+  })
+
+  prev.forEach((btn)=>{
+    btn.addEventListener("click", () =>{
+      fstep--;
+      updateFormSteps();
+      updateProgressbar();
+    })
+  })
+
+  function updateFormSteps() {
+  formSteps.forEach((formStep) => 
+  {
+    formStep.classList.contains("form-step-active") &&
+      formStep.classList.remove("form-step-active");
+  }
+  );
+
+  formSteps[fstep].classList.add("form-step-active");
+}
+
+let coalf;
+let elecf;
+let transf;
+let deforestf;
+let total;
+
+resultbtn.addEventListener("click", () =>{
+  const Bituminous = parseFloat(document.querySelector("#bitu").value) || 0;
+  const Anthracite = parseFloat(document.querySelector("#anthra").value) || 0;
+  const Lignite = parseFloat(document.querySelector("#lignite").value) || 0;
+  const subBituminous = parseFloat(document.querySelector("#subbitu").value) || 0;
+
+  const elecConsump = parseFloat(document.querySelector("#electricitycon").value) || 0;
+  const eFactor = parseFloat(document.querySelector("#eFactor").value) || 0.716;
+  const ddistance = parseFloat(document.querySelector("#ddistance").value) || 0;
+  const pdistance = parseFloat(document.querySelector("#pdistance").value) || 0;
+  const deff = parseFloat(document.querySelector("#deff").value) || 1;
+  const peff = parseFloat(document.querySelector("#peff").value) || 1;
+  const deforestedArea = parseFloat(document.querySelector("#deforestedArea").value) || 0;
+  const cStock = parseFloat(document.querySelector("#cStock").value) || 150;
+  
+  // COMBUSTION CALCULATION
+  let lpct = 0.30;
+  let sbpct = 0.40;
+  let bpct = 0.75;
+  let apct = 0.90;
+
+  let coalFootprint = (((lpct * Lignite) + (sbpct * subBituminous) + (bpct * Bituminous) + (apct * Anthracite))*3.67)/1000;
+  coalf = coalFootprint.toFixed(4);
+
+  // ELECTRICITY CALCULATION
+  let elecFootprint = (eFactor * elecConsump)/1000;
+  elecf = elecFootprint.toFixed(4);
+
+  //TRANSPORT CALCULATION
+  let dieselFootprint = ((ddistance * (deff/100) * 2.67)/1000);
+  let petrolFootprint = ((pdistance * (peff/100) * 2.31)/1000);
+  let TransFootprint = dieselFootprint + petrolFootprint;
+  transf = TransFootprint.toFixed(4);
+
+  //DEFORESTATION CALCULATION
+  let deforestationFootprint = (deforestedArea * cStock * 3.67)/1000;
+  deforestf = deforestationFootprint.toFixed(4);
+  updateTotalResult(coalFootprint,elecFootprint,TransFootprint,deforestationFootprint);
+})
+
+function updateProgressbar() {
+  progressSteps.forEach((progressStep, idx) => {
+    if (idx < fstep + 1) {
+      progressStep.classList.add("progress-step-active");
+    } else {
+      progressStep.classList.remove("progress-step-active");
+    }
+  });
+  const progressActive = document.querySelectorAll(".progress-step-active");
+
+  progress.style.width =
+    ((progressActive.length - 1) / (progressSteps.length - 1)) * 100 + "%";
+}
+
+  function updateTotalResult(coalFootprint,elecFootprint,TransFootprint,deforestationFootprint) {
+    total = coalFootprint + elecFootprint + TransFootprint + deforestationFootprint;
+    document.getElementById("directEmissionResult").innerHTML = `Direct Emissions: <input class="ms-2 col-3" type="text" value="${coalFootprint.toFixed(4)}" aria-label="Disabled input example" disabled readonly name="Mine[result.coalFootprint]"> tCO<sub>2e</sub>`;
+    document.getElementById("electricityResult").innerHTML = `Electricity Use: <input class="ms-2 col-3" type="text" value="${elecFootprint.toFixed(4)}" aria-label="Disabled input example" disabled readonly name="Mine[result.electricityFootprint]"> tCO<sub>2e</sub>`;
+    document.getElementById("transportResult").innerHTML = `Supply Chain: <input class="ms-2 col-3" type="text" value="${TransFootprint.toFixed(4)}" aria-label="Disabled input example" disabled readonly name="Mine[result.transportFootprint]"> tCO<sub>2e</sub>`;
+    document.getElementById("deforestationResult").innerHTML = `Deforestation: <input class="ms-2 col-3" type="text" value="${deforestationFootprint.toFixed(4)}" aria-label="Disabled input example" disabled readonly name="Mine[result.deforestationFootprint]"> tCO<sub>2e</sub>`;
+    document.getElementById("totalResult").innerHTML = `<div class ="text-center fs-3">Total Carbon Footprint: <input class="ms-2 col-3" type="text" value="${total.toFixed(4)}" aria-label="Disabled input example" disabled readonly name="Mine[result.totalFootprint]"> tCO<sub>2e</sub></div>`;
+
+    document.getElementById('hiddenDirectEmissions').value = coalFootprint.toFixed(4);
+    document.getElementById('hiddenElectricityEmissions').value =  elecFootprint.toFixed(4);
+    document.getElementById('hiddenTransportEmissions').value = TransFootprint.toFixed(4);
+    document.getElementById('hiddenDeforestationEmissions').value = deforestationFootprint.toFixed(4);
+    document.getElementById('hiddenTotalFootprint').value = total.toFixed(4);
+  }
+
+  document.getElementById('state').addEventListener('change', function () {
+      const state = this.value;
+      const cityDropdown = document.getElementById('city');
+
+      // Clear current cities
+      cityDropdown.innerHTML = '<option value="">---Select Your District---</option>';
+
+      if (state) {
+        fetch(`/getCities?state=${state}`)
+          .then(response => response.json())
+          .then(cities => {
+            cities.forEach(city => {
+              const option = document.createElement('option');
+              option.value = city;
+              option.text = city;
+              cityDropdown.add(option);
+            });
+          })
+          .catch(error => console.error('Error fetching cities:', error));
+      }
+    });
+
+  const suggestionsButton = document.querySelector('.suggestion');
+  suggestionsButton.addEventListener('click', function(event) {
+    event.preventDefault();
+
+    // Retrieve form data and calculate coalQty and transportation
+    const Lignite = parseFloat(document.getElementById('lignite').value) || 0;
+    const Bitu = parseFloat(document.getElementById('bitu').value) || 0;
+    const Subbitu = parseFloat(document.getElementById('subbitu').value) || 0;
+    const Anthra = parseFloat(document.getElementById('anthra').value) || 0;
+    const coalQty = Lignite + Bitu + Subbitu + Anthra;
+    const Ddistance = parseFloat(document.getElementById('ddistance').value) || 0;
+    const Pdistance = parseFloat(document.getElementById('pdistance').value) || 0;
+    const deff = parseFloat(document.querySelector('#deff').value) || 1;
+    const peff = parseFloat(document.querySelector('#peff').value) || 1;
+    const transportation = Ddistance + Pdistance;
+    const elecConsump = parseFloat(document.getElementById('electricitycon').value) || 0;
+    const eFactor = parseFloat(document.querySelector('#eFactor').value) || 0.716;
+    const deforestedArea = parseFloat(document.getElementById('deforestedArea').value) || 0;
+    const cStock = parseFloat(document.querySelector('#cStock').value) || 150;
+
+    // COMBUSTION CALCULATION
+    let lpct = 0.30;
+    let sbpct = 0.40;
+    let bpct = 0.75;
+    let apct = 0.90;
+
+    let coalFootprint = (((lpct * Lignite) + (sbpct * Subbitu) + (bpct * Bitu) + (apct * Anthra))*3.67)/1000;
+    coalf = coalFootprint.toFixed(4);
+
+    // ELECTRICITY CALCULATION
+    let elecFootprint = (eFactor * elecConsump)/1000;
+    elecf = elecFootprint.toFixed(4);
+
+    //TRANSPORT CALCULATION
+    let dieselFootprint = ((Ddistance * (deff/100) * 2.67)/1000);
+    let petrolFootprint = ((Pdistance * (peff/100) * 2.31)/1000);
+    let TransFootprint = dieselFootprint + petrolFootprint;
+    transf = TransFootprint.toFixed(4);
+
+    //DEFORESTATION CALCULATION
+    let deforestationFootprint = (deforestedArea * cStock * 3.67)/1000;
+    deforestf = deforestationFootprint.toFixed(4);
+
+    //TOTAL CALCULATION
+    total = (coalFootprint + elecFootprint + TransFootprint + deforestationFootprint).toFixed(4);
+
+    // Redirect to Streamlit app with query parameters
+    window.location.href = `http://localhost:8501/?coalQty=${encodeURIComponent(coalQty)}&elecConsump=${encodeURIComponent(elecConsump)}&transportation=${encodeURIComponent(transportation)}&deforestedArea=${encodeURIComponent(deforestedArea)}&coalf=${encodeURIComponent(coalf)}&elecf=${encodeURIComponent(elecf)}&transf=${encodeURIComponent(transf)}&deforestf=${encodeURIComponent(deforestf)}&total=${encodeURIComponent(total)}`;
+  });
+</script>

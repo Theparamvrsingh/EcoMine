@@ -1,0 +1,326 @@
+<% layout("../layouts/boilerplate") %>
+
+<style>
+body {
+  font-family: 'Roboto', sans-serif;
+  width: 100%;
+  color: #142114;
+  margin: 0;
+  background-color: rgb(201, 184, 169);
+  padding: 0;
+}
+
+.container {
+  padding: 40px;
+}
+
+.indicator{
+  width: 100%;
+}
+
+.form-step {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  border-top: 1px solid #cecdcd;
+}
+
+#calcBox {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+ 
+}
+
+.header-title {
+  font-size: 3rem;
+  color: #142114;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.addmine .form-label {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.addmine .form-control, .addmine .form-select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-select#state {
+  margin-bottom: 10px;
+}
+
+
+#resultBox {
+  display: none;
+  margin-top: 30px;
+  padding: 15px;
+  background: #e9ecef;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  text-align: center;
+  color: #333;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<div class="container py-3">
+    <div class="row">
+        <div class="col-10 offset-1">
+            <div id="calcBox">
+                <div >
+                    <h1 class="text-center mb-4 header-title"> Edit Mine </h1>
+
+                    <form action="/index/<%= mines.id%>/?_method=PUT" method="post" id="formedit">
+                        <div class="mb-4">
+                            <label for="name" class="form-label">Name of the Coal Mine:</label>
+                            <input type="text" class="form-control" id="name" name="Mine[name]" value="<%= mines.name %>">
+                        </div>
+
+                        <div class="mb-4">
+                          <p class="mb-2">Location of the Coal Mine:</p>
+                          <label for="State" class="form-label">State</label>
+                          <select class="form-select" aria-label="State" name="Mine[state]" id="state">
+                              <option value="<%= mines.state %>" selected id="selectedState"><%= mines.state %></option>
+                              <% for(let p of places.states) {%>
+                                  <option value="<%= p.name %>"><%= p.name %></option>
+                              <% } %>
+                          </select>
+                            
+                          <label for="district" class="form-label">District</label>
+                          <select class="form-select" aria-label="district" name="Mine[district]" id="city">
+                              <option value="<%= mines.district %>" selected ><%= mines.district %></option>
+                          </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image URL:</label>
+                            <input type="text" class="form-control" id="image" name="Mine[image]" value="<%= mines.image %>">
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="desc" class="form-label">Description</label>
+                            <textarea class="form-control" name="Mine[description]" id="desc"><%= mines.description %></textarea>
+                        </div>
+
+                        
+
+
+
+
+
+
+
+
+                        <div id="directEmissionTab" class="form-step">
+                          <p class="text-start fs-4">Enter Coal Quantities (in kg)</p>
+            
+                          <div class="row mb-2 align-items-center">
+                            <label for="lignite" class="col-2 text-end">Lignite:</label>
+                            <div class="col-6">
+                              <input step="0.0001" type="number" class="form-control shadow-sm" id="lignite" name="Mine[factors.coalType.lignite]" value="<%= mines.factors.coalType.lignite %>">
+                            </div>
+                            <div class="col-1 p-0">kg.</div>
+                          </div>
+                          <div class="row mb-2 align-items-center">
+                            <label for="subbitu" class="col-2 text-end">Sub-bituminous:</label>
+                            <div class="col-6">
+                              <input step="0.0001" type="number" class="form-control shadow-sm" id="subbitu" name="Mine[factors.coalType.subbitu]"  value="<%= mines.factors.coalType.subbitu %>">
+                            </div>
+                            <div class="col-1 p-0">kg.</div>
+                          </div>
+                          <div class="row mb-2 align-items-center">
+                            <label for="bitu" class="col-2 text-end">Bituminous:</label>
+                            <div class="col-6">
+                              <input step="0.0001" type="number" class="form-control shadow-sm" id="bitu" name="Mine[factors.coalType.bitu]"  value="<%= mines.factors.coalType.bitu %>">
+                            </div>
+                            <div class="col-1 p-0">kg.</div>
+                          </div>
+                          <div class="row mb-2 align-items-center">
+                            <label for="anthra" class="col-2 text-end">Anthracite:</label>
+                            <div class="col-6">
+                              <input step="0.0001" type="number" class="form-control shadow-sm" id="anthra" name="Mine[factors.coalType.anthra]"  value="<%= mines.factors.coalType.anthra %>">
+                            </div>
+                            <div class="col-1 p-0">kg.</div>
+                          </div>
+                           </div>
+            
+                      <!-- Electricity Use Content -->
+                      
+                      <div id="electricityUseTab" class="form-step">
+                        <p class="text-start fs-4">Electricity Data</p>
+                          <div class="mb-4">
+                            <label for="electricitycon" class="form-label">Electricity Consumed (in kWh):</label>
+                            <input step="0.0001" type="number" class="form-control shadow-sm" id="electricitycon" name="Mine[factors.electricityConsume]"  value="<%= mines.factors.electricityConsume%>">
+                          </div>
+                          <div class="mb-4">
+                            <label for="eFactor" class="form-label">Emission Factor:</label>
+                            <input step="0.0001" type="number" class="form-control shadow-sm" id="eFactor" value=0.716 name="Mine[factors.eFactor]"  value="<%= mines.factors.eFactor %>">
+                            <div class="form-text">Average emission factor as per 2023 is approx. 0.716</div>
+                          </div>
+                        </div>
+            
+                      <!-- Transport & Others Content -->
+                     
+                      <div id="transportTab" class="form-step">
+                        <p class="text-start fs-4">Transport</p>
+                          <div class="mb-4">
+                            <p class="text-center">Fuel Consumption</p>
+                            <div class="row gx-5">
+                              <div class="col border-end border-dark-subtle">
+                                <div class="p-2">
+                                  <div class="text-center border-bottom">Diesel</div>
+                                  <label for="ddistance" class="form-label mt-3">Distance Travelled:</label>
+                                  <input step="0.0001" type="number" class="form-control shadow-sm" id="ddistance" name="Mine[factors.fuelUse.ddistance]" value="<%= mines.factors.fuelUse.ddistance %>">
+                                  <label for="deff" class="form-label mt-3">Fuel efficiency of vehicle:</label>
+                                  <input step="0.0001" type="number" class="form-control shadow-sm" id="deff" name="Mine[factors.fuelUse.dfueleff]" value="<%= mines.factors.fuelUse.dfueleff %>">
+                                </div>
+                              </div>
+                              
+                              <div class="col">
+                                <div class="p-2">
+                                  <div class="text-center border-bottom">Petrol</div>
+                                  <label for="pdistance" class="form-label mt-3">Distance Travelled:</label>
+                                  <input step="0.0001" type="number" class="form-control shadow-sm" id="pdistance" name="Mine[factors.fuelUse.pdistance]" value="<%= mines.factors.fuelUse.pdistance %>">
+                                  <label for="peff" class="form-label mt-3">Fuel efficiency of vehicle:</label>
+                                  <input step="0.0001" type="number" class="form-control shadow-sm" id="peff" name="Mine[factors.fuelUse.pfueleff]" value="<%= mines.factors.fuelUse.pfueleff %>">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+            
+                      <!-- Deforestation Content -->
+                      
+                      <div id="deforestationTab" class="form-step">
+                        <p class="text-start fs-4">Deforestation</p>
+                          <div class="mb-4">
+                            <label for="deforestedArea" class="form-label">Deforested Area (in hectares):</label>
+                            <input step="0.0001" type="number" class="form-control shadow-sm" id="deforestedArea" name="Mine[factors.deforestedArea]" value="<%= mines.factors.deforestedArea%>">
+                          </div>
+                          <div class="mb-4">
+                            <label for="cStock" class="form-label"> Carbon Stock per Hectare:</label>
+                            <input step="0.0001" type="number" class="form-control shadow-sm" id="cStock" value=150 name="Mine[factors.cStock]"  value="<%= mines.factors.deforestedArea%>">
+                          </div>
+                        </div>
+
+
+
+                        <input name="Mine[result.coalFootprint]" step="0.0001" type="number" id="coalFootprint" value="<%= mines.result.coalFootprint %>" hidden>
+                        <input name="Mine[result.electricityFootprint]" step="0.0001" type="number" id="electricityFootprint" value="<%= mines.result.electricityFootprint %>" hidden>
+                        <input name="Mine[result.transportFootprint]" step="0.0001" type="number" id="transportFootprint" value="<%= mines.result.transportFootprint %>" hidden>
+                        <input name="Mine[result.deforestationFootprint]" step="0.0001" type="number" id="deforestationFootprint" value="<%= mines.result.deforestationFootprint %>" hidden>
+                        <input name="Mine[result.totalFootprint]" step="0.0001" type="number" class=" text-center" id="totalFootprint" value="<%= mines.result.totalFootprint %>" hidden>
+
+                        <div class="row text-center">
+                          <div class="col">
+                            
+                            <a href="/index/<%= mines.id%>" class="mt-3"><button type="button" class="btn btn-primary mt-3 indicator">Back</button></a>
+                          </div>
+                          <div class="col">
+                            <button class="btn btn-success mt-3 d-inline indicator" id="subButton">Submit</button>
+                          </div>
+                        </div>
+                    </form>
+                    
+                    
+                    <div id="resultBox"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>  
+
+    document.getElementById('state').addEventListener('change', function () {
+      const state = this.value;
+      const cityDropdown = document.getElementById('city');
+
+      // Clear current cities
+      cityDropdown.innerHTML = '<option value="">---Select Your District---</option>';
+
+      if (state) {
+        fetch(`/getCities?state=${state}`)
+          .then(response => response.json())
+          .then(cities => {
+            cities.forEach(city => {
+              const option = document.createElement('option');
+              option.value = city;
+              option.text = city;
+              cityDropdown.add(option);
+            });
+          })
+          .catch(error => console.error('Error fetching cities:', error));
+      }
+    });
+
+
+    
+</script>
+
+<script>
+  document.getElementById('formedit').addEventListener('submit', (event) => {
+  event.preventDefault(); // Prevent the default form submission
+
+  // Gather values for calculation
+  const Bituminous = parseFloat(document.querySelector("#bitu").value) || 0;
+  const Anthracite = parseFloat(document.querySelector("#anthra").value) || 0;
+  const Lignite = parseFloat(document.querySelector("#lignite").value) || 0;
+  const subBituminous = parseFloat(document.querySelector("#subbitu").value) || 0;
+
+  const electricityConsume = parseFloat(document.querySelector("#electricitycon").value) || 0;
+  const eFactor = parseFloat(document.querySelector("#eFactor").value) || 0.716;
+  const ddistance = parseFloat(document.querySelector("#ddistance").value) || 0;
+  const pdistance = parseFloat(document.querySelector("#pdistance").value) || 0;
+  const deff = parseFloat(document.querySelector("#deff").value) || 1;
+  const peff = parseFloat(document.querySelector("#peff").value) || 1;
+  const deforestedArea = parseFloat(document.querySelector("#deforestedArea").value) || 0;
+  const cStock = parseFloat(document.querySelector("#cStock").value) || 150;
+
+  // Perform calculations
+  let lpct = 0.30;
+  let sbpct = 0.40;
+  let bpct = 0.75;
+  let apct = 0.90;
+
+  let coalfootprint = (((lpct * Lignite) + (sbpct * subBituminous) + (bpct * Bituminous) + (apct * Anthracite))*3.67)/1000;
+  let elecFootprint = (eFactor * electricityConsume)/1000;
+  let dieselFootprint = ((ddistance * (deff/100) * 2.67)/1000);
+  let petrolFootprint = ((pdistance * (peff/100) * 2.31)/1000);
+  let TransFootprint = dieselFootprint + petrolFootprint;
+  let deforestationfootprint = (deforestedArea * cStock * 3.67)/1000;
+
+  // Update hidden fields
+  document.getElementById('coalFootprint').value = coalfootprint.toFixed(4);
+  document.getElementById('electricityFootprint').value = elecFootprint.toFixed(4);
+  document.getElementById('transportFootprint').value = TransFootprint.toFixed(4);
+  document.getElementById('deforestationFootprint').value = deforestationfootprint.toFixed(4);
+  document.getElementById('totalFootprint').value = (coalfootprint + elecFootprint + TransFootprint + deforestationfootprint).toFixed(4);
+
+  // Programmatically submit the form
+  event.target.submit();
+});
+
+
+</script>
