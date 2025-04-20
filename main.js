@@ -60,11 +60,11 @@ app.use(cors());
 
 // Session configuration
 const sessionConfig = {
-    secret: 'keyboard cat',
+    secret: process.env.SESSION_SECRET || 'keyboard cat',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ 
-        mongoUrl: 'mongodb://localhost:27017/mines',
+        mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/mines',
         touchAfter: 24 * 3600 // Only update the session every 24 hours
     }),
     cookie: { 
@@ -92,7 +92,7 @@ app.use(async (req, res, next) => {
 
 // MongoDB connection with retry logic
 const connectWithRetry = () => {
-    mongoose.connect('mongodb://localhost:27017/mines', { 
+    mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mines', { 
         useNewUrlParser: true, 
         useUnifiedTopology: true 
     })
@@ -250,14 +250,14 @@ app.use('/marketplace', marketplaceRoutes);
 
 // Start server with error handling
 const port = process.env.PORT || 3001;
-const server = app.listen(port, () => {
+const server = app.listen(port, '0.0.0.0', () => {
     console.log(`SERVER RUNNING ON PORT ${port}.....................`);
 }).on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
         console.error(`Port ${port} is already in use. Trying again in 5 seconds...`);
         setTimeout(() => {
             server.close();
-            server.listen(port);
+            server.listen(port, '0.0.0.0');
         }, 5000);
     } else {
         console.error('Server error:', err);
