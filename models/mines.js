@@ -51,6 +51,11 @@ const mineSchema = new Schema({
         transportFootprint: Number,
         deforestationFootprint: Number,
         totalFootprint: Number
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 }, opts)
 

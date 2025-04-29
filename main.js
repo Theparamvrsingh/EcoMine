@@ -58,12 +58,14 @@ const sessionConfig = {
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ 
-        mongoUrl: process.env.MONGODB_URL || 'mongodb://localhost:27017/ecomine',
+        mongoUrl: process.env.MONGODB_URL || 'mongodb+srv://newcluster:newcluster@cluster0.kxfq0rm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
         touchAfter: 24 * 3600
     }),
     cookie: { 
         maxAge: 1000 * 60 * 60 * 24,
-        httpOnly: true
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
     }
 };
 
@@ -86,7 +88,10 @@ app.use(async (req, res, next) => {
 
 // MongoDB connection with retry logic
 const connectWithRetry = () => {
-    mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mines', { 
+    const mongoUrl = process.env.MONGODB_URL || 'mongodb+srv://newcluster:newcluster@cluster0.kxfq0rm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+    console.log('Attempting to connect to MongoDB at:', mongoUrl.replace(/\/\/[^@]+@/, '//****:****@')); // Hide credentials in logs
+    
+    mongoose.connect(mongoUrl, { 
         useNewUrlParser: true, 
         useUnifiedTopology: true 
     })
@@ -94,13 +99,27 @@ const connectWithRetry = () => {
         console.log("MONGO CONNECTION OPEN!!!");
     })
     .catch(err => {
-        console.log("OH NO MONGO CONNECTION ERROR!!!!");
-        console.log(err);
+        console.error("MongoDB Connection Error:", err.message);
         console.log("Retrying in 5 seconds...");
         setTimeout(connectWithRetry, 5000);
     });
 };
 
+// Add MongoDB connection event handlers
+mongoose.connection.on('error', err => {
+    console.error('MongoDB connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected. Attempting to reconnect...');
+    connectWithRetry();
+});
+
+mongoose.connection.on('connected', () => {
+    console.log('MongoDB connected successfully');
+});
+
+// Start the connection
 connectWithRetry();
 
 app.use('/', authRoutes);
@@ -134,6 +153,7 @@ app.post("/index", isAuthenticated, async (req, res) => {
         const mineData = req.body.Mine;
         const mine = new Mines(mineData); 
         mine.geometry = geoData.features[0].geometry;
+        mine.user = req.session.userId;
         await mine.save();
         res.redirect("/index");
     } catch (err) {
@@ -148,7 +168,7 @@ app.get("/index", async (req, res) => {
         if (!user) {
             return res.redirect('/login');
         }
-        const mines = await Mines.find({});
+        const mines = await Mines.find({ user: user._id });
         res.render("index", { mines, heroVideo: true });
     } catch (err) {
         console.error("Error fetching mines:", err);
@@ -242,10 +262,13 @@ app.get('/getCities', (req, res) => {
 
 app.use('/marketplace', marketplaceRoutes);
 
-// Move error handling middleware to the end
+// Add error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
+    console.error('Error:', err);
+    res.status(500).render('error', { 
+        error: 'Something went wrong!',
+        message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+    });
 });
 
 // Start server with error handling
