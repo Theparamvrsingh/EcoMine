@@ -2,8 +2,14 @@
   "name": "sih",
   "version": "1.0.0",
   "main": "main.js",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js",
+    "dev": "nodemon main.js",
+    "build": "echo 'Building application...'"
   },
   "keywords": [],
   "author": "",

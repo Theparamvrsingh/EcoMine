@@ -44,12 +44,6 @@ app.engine('ejs', ejsMate);
 app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, 'pages'));
 
-// Add basic error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
-
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static('pages'));
@@ -64,8 +58,8 @@ const sessionConfig = {
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({ 
-        mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/mines',
-        touchAfter: 24 * 3600 // Only update the session every 24 hours
+        mongoUrl: process.env.MONGODB_URL || 'mongodb://localhost:27017/ecomine',
+        touchAfter: 24 * 3600
     }),
     cookie: { 
         maxAge: 1000 * 60 * 60 * 24,
@@ -247,6 +241,12 @@ app.get('/getCities', (req, res) => {
 });
 
 app.use('/marketplace', marketplaceRoutes);
+
+// Move error handling middleware to the end
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
 
 // Start server with error handling
 const port = process.env.PORT || 3001;
